@@ -221,3 +221,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# mozzavid-microstructure: dataset and image files
+# The MozzaVID volumes are large and redistributed separately; keep them out of git.
+# results/ and figures/ are intentionally NOT ignored so example outputs can be committed.
+Small/
+data/*
+!data/README.md
+*.tif
+*.tiff

@@ -1,0 +1,20 @@
+# Exact pins from design.md "Dependencies" (conda-forge only).
+# Create with: conda env create -f environment.yml
+# No scikit-image (all image processing runs in Fiji) and no hypothesis (Requirement 27.10).
+name: mozzavid
+channels:
+  - conda-forge
+dependencies:
+  - python=3.14.10      # 3.11 dropped: current numpy/scipy/tifffile require Python >= 3.12. See design H12
+  - openjdk=11.0.33.1
+  - maven=3.10.2        # required by jgo/PyImageJ to resolve sc.fiji:fiji
+  - pyimagej=1.8.0
+  - scyjava=1.12.5
+  - jpype1=1.7.1        # Python-Java bridge under scyjava
+  - imglyb=2.1.0        # transitive via pyimagej; pinned for reproducibility
+  - numpy=2.5.5
+  - scipy=1.18.1        # tukey_hsd, kruskal, levene, f_oneway, ttest_ind, rankdata, norm
+  - pandas=3.1.1
+  - matplotlib=3.11.2
+  - tifffile=2026.11.16
+  - pytest=9.2.0        # dev dependency kept in the same env for one-command setup

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=77"]  # >=77 for the SPDX `license = "MIT"` string form
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mozzavid-microstructure"
+version = "0.1.0"
+description = "Fiji-based segmentation and quantification of food microstructure in 3D X-ray CT volumes (MozzaVID Small)."
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Ramiro Chen" }]
+requires-python = ">=3.12"
+# Dependencies are managed by environment.yml (conda-forge pins, incl. Java and Maven).
+
+[tool.setuptools]
+packages = ["mozzavid"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Markers are registered only; nothing is deselected by default. Data-dependent tests self-skip.
+markers = [
+    "integration: needs the MozzaVID Small data root; skipped when it is absent",
+    "smoke: end-to-end CLI run on real data; skipped when the data root is absent",
+]
