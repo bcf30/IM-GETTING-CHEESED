@@ -17,6 +17,10 @@ packages = ["mozzavid"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# JPype installs its own SEH handler at JVM startup on Windows; pytest's faulthandler then
+# dumps a benign "access violation" stack. Disabling faulthandler removes the noise without
+# hiding real failures (a true JVM crash still aborts the process with a non-zero exit).
+addopts = "-p no:faulthandler"
 # Markers are registered only; nothing is deselected by default. Data-dependent tests self-skip.
 markers = [
     "integration: needs the MozzaVID Small data root; skipped when it is absent",
