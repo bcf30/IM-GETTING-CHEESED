@@ -46,6 +46,37 @@ openjdk found through `JAVA_HOME`. `fetch="never"` is not usable: pyimagej 1.8.0
 `_guess_java_version` raises `UnboundLocalError` (`major_version`) when no JVM is running and
 no fetch is planned.
 
+### MKL DLL load on Windows (unactivated interpreter)
+
+**Symptom.** Calling the env's interpreter by absolute path without `conda activate`
+(for example `C:\Users\...\envs\mozzavid\python.exe script.py`) crashed with a Windows fatal
+exception `0xC06D007F` (`ERROR_DELAY_LOAD_FAILED`) inside any LAPACK call: `numpy.linalg.inv`
+on a 2x2 identity, `numpy.linalg.svd`, and therefore `matplotlib`'s `tight_layout`
+(which inverts a transform during tick/title layout). Running the same code through
+`conda run -n mozzavid python ...` or in an activated shell worked.
+
+**Cause.** MKL (the BLAS/LAPACK backend, `mkl 2026.2.1`) lives only in the env's `Library\bin`.
+Its runtime loads `mkl_rt.3.dll` and then *delay-loads* `mkl_intel_thread.3.dll` ->
+`libiomp5md.dll`. The delay-load search needs `Library\bin` on the process `PATH`. Conda
+activation prepends `Library\bin` to `PATH`; a bare interpreter launch does not, so the
+delay-load fails. Each DLL loads fine on its own by explicit path, and
+`os.add_dll_directory(Library\bin)` alone does **not** fix it: MKL's lazy secondary load
+uses the classic `PATH` search, not the `add_dll_directory` set.
+
+**Fix (committed to the env).** A startup `.pth` prepends the env's `Library\bin` to `PATH`
+at interpreter start, mirroring activation:
+
+```
+# <env>\Lib\site-packages\_mozzavid_mkl_dlldir.pth  (single physical line)
+import os, sys; _d = os.path.join(sys.prefix, 'Library', 'bin'); sys.platform == 'win32' and os.path.isdir(_d) and (os.add_dll_directory(_d), os.environ.__setitem__('PATH', _d + os.pathsep + os.environ.get('PATH', '')))
+```
+
+A `.pth` line beginning with `import` runs before any package import, so MKL resolves on the
+first LAPACK call. With this file present the bare interpreter runs the full test suite
+(`50 passed`) and renders figures without `conda run`. The file lives inside the environment,
+not in the repository; recreating the env from `environment.yml` drops it, so re-add it or run
+through activation. This is an environment/runtime fix only; no pipeline code depends on it.
+
 ## Fiji coordinate
 
 ```
