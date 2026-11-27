@@ -45,7 +45,7 @@ CLASS_BINARY_IMAGES: str = "inra.ijpb.binary.BinaryImages"
 CLASS_LABEL_IMAGES: str = "inra.ijpb.label.LabelImages"
 # MorphoLibJ 1.6.3's AnalyzeRegions3D plugin exposes only run(String); the class it delegates to is:
 CLASS_ANALYZE_REGIONS_3D: str = "inra.ijpb.measure.region3d.MorphometricFeatures3D"
-CLASS_MAX_FERET_3D: str = "inra.ijpb.measure.region3d.MaxFeretDiameter3D"  # headless max Feret (H7)
+CLASS_MAX_FERET_3D: str = "inra.ijpb.measure.region3d.MaxFeretDiameter3D"  # importable but unused (H7)
 
 # Float labels hold up to 2^24 exact integers (> 192³ voxels), so labelling a noisy mask cannot
 # overflow, which 16-bit labels (65535) could.
@@ -55,8 +55,8 @@ MORPHOMETRIC_FEATURES_3D: tuple[str, ...] = (
     "VOXEL_COUNT", "VOLUME", "SURFACE_AREA", "SPHERICITY", "BOUNDING_BOX", "CENTROID",
     "EQUIVALENT_ELLIPSOID",
 )
-MAX_FERET_COLUMN: str = "MaxFeret.Diameter"   # appended to the region table by analyze_regions_3d
-_FERET_DIAMETER_COLUMN: str = "Diameter"      # column name in MaxFeretDiameter3D's own table
+MAX_FERET_COLUMN: str = "MaxFeret.Diameter"   # MaxFeretDiameter3D's column; no longer used (H7)
+_FERET_DIAMETER_COLUMN: str = "Diameter"      # column name in MaxFeretDiameter3D's own table (H7)
 
 # Fiji column name -> internal raw name (pixel units), from the discovery probe table.
 COLUMN_MAP: dict[str, str] = {
@@ -71,7 +71,6 @@ COLUMN_MAP: dict[str, str] = {
     "Centroid.X": "centroid_x_px", "Centroid.Y": "centroid_y_px", "Centroid.Z": "centroid_z_px",
     "Elli.Radius1": "ellipsoid_radius1_px", "Elli.Radius2": "ellipsoid_radius2_px",
     "Elli.Radius3": "ellipsoid_radius3_px",
-    MAX_FERET_COLUMN: "feret_max_px",
 }
 
 _JAVA_VERSION_COMMAND: tuple[str, ...] = ("java", "-version")
@@ -122,6 +121,30 @@ def _init_failure_message(error: BaseException) -> str:
     )
 
 
+def _ensure_conda_java_home() -> None:
+    """Point JAVA_HOME and PATH at the conda env's bundled JDK when it is present and complete.
+
+    scyjava's fetch="auto" otherwise downloads a cjdk JRE that on this machine is incomplete
+    (no jar.exe), so imagej.init fails intermittently with 'NoneType is not callable', depending
+    on whether jgo's PATH search happens to find the conda Java first. The conda openjdk pinned
+    in environment.yml is a complete JDK under the interpreter prefix. Setting JAVA_HOME and
+    prepending its bin to PATH makes jgo's "system Java" detection deterministic, so the JVM is
+    always the conda JDK regardless of how Python was launched. An existing JAVA_HOME the user set
+    is left untouched.
+    """
+    import os
+    import sys
+    candidate = os.path.join(sys.prefix, "Library", "lib", "jvm")
+    bin_dir = os.path.join(candidate, "bin")
+    if not (os.path.isfile(os.path.join(bin_dir, "java.exe"))
+            and os.path.isfile(os.path.join(bin_dir, "jar.exe"))):
+        return
+    os.environ.setdefault("JAVA_HOME", candidate)
+    if bin_dir not in os.environ.get("PATH", "").split(os.pathsep):
+        os.environ["PATH"] = bin_dir + os.pathsep + os.environ.get("PATH", "")
+    log.info("using the conda env JDK: %s", candidate)
+
+
 def _start_imagej():
     """Configure the JVM heap and start headless Fiji with the legacy layer.
 
@@ -130,6 +153,7 @@ def _start_imagej():
     fetch="auto" makes scyjava use the conda-pinned openjdk (JAVA_HOME) instead of its default
     "always" download of a separate JRE; "never" trips a pyimagej 1.8.0 version-guess bug.
     """
+    _ensure_conda_java_home()
     scyjava.config.set_java_constraints(fetch="auto")
     scyjava.config.add_option(JVM_MAX_HEAP)
     endpoints = [FIJI_COORDINATE, *EXTRA_ENDPOINTS]
@@ -218,6 +242,17 @@ def runtime_versions() -> dict[str, str]:
 
 # --- numpy <-> Java conversion (Requirement 7) -------------------------------------------
 # Every helper builds its Java objects per call and returns them; nothing is cached here.
+
+
+def collect_garbage() -> None:
+    """Prompt the JVM to free image memory between volumes (Requirement 13.10).
+
+    PyImageJ/ImgLib2 conversions leave short-lived Java objects (a full 192³ float image is
+    ~28 MB) that the JVM reclaims lazily. Over a long sequential run the 4 GB heap can fill
+    before a GC cycle runs, raising OutOfMemoryError. Calling System.gc() after each volume
+    keeps peak heap flat; it is cheap relative to the ~2 s per-volume processing time.
+    """
+    scyjava.jimport("java.lang.System").gc()
 
 
 def _require_3d(arr: np.ndarray) -> None:
@@ -439,28 +474,25 @@ def _morphometric_features():
 
 
 def _append_max_feret(table, labels) -> None:
-    """Add the MaxFeretDiameter3D diameter to `table` as MAX_FERET_COLUMN, row by row.
+    """Deprecated: the 3D max Feret is approximated from the equivalent ellipsoid (H7).
 
-    Both MorphoLibJ analyzers order rows by ascending label value, which is asserted so a
-    mismatch can never silently attach a diameter to the wrong object.
+    MorphoLibJ's `MaxFeretDiameter3D.computeTable` scales as O(points²) per object and does not
+    finish on real volumes with ~1800 components, so it is no longer called in the measurement
+    path. `measure._feret_um` uses `2 × largest ellipsoid semi-axis` instead. Kept for reference;
+    see docs/reproducibility.md under H7.
     """
-    feret = scyjava.jimport(CLASS_MAX_FERET_3D)().computeTable(labels)
-    if int(feret.size()) != int(table.size()):
-        raise RuntimeError(f"Feret rows {feret.size()} != region rows {table.size()}")
-    for row in range(int(table.size())):
-        if str(feret.getLabel(row)) != str(table.getLabel(row)):
-            raise RuntimeError(f"label order differs at row {row}")
-        table.setValue(MAX_FERET_COLUMN, row, feret.getValue(_FERET_DIAMETER_COLUMN, row))
+    raise NotImplementedError("max Feret is approximated from the equivalent ellipsoid; see H7")
 
 
 def analyze_regions_3d(labels):
     """Measure every label of an uncalibrated label ImagePlus; return an ij.measure.ResultsTable.
 
-    Columns are MorphoLibJ's Analyze Regions 3D names (see COLUMN_MAP) plus MAX_FERET_COLUMN,
-    all in voxel units. Scaling to µm happens once, in Python.
+    Columns are MorphoLibJ's Analyze Regions 3D names (see COLUMN_MAP), all in voxel units.
+    The 3D max Feret is intentionally not computed here: `MaxFeretDiameter3D` scales as
+    O(points²) per object and does not finish on real volumes with ~1800 components. The
+    max Feret is approximated downstream from the equivalent ellipsoid (measure._feret_um, H7).
+    Scaling to µm happens once, in Python.
     """
     _require_direct_backend("analyze_regions_3d")
     get_ij()
-    table = _morphometric_features().computeTable(labels)
-    _append_max_feret(table, labels)
-    return table
+    return _morphometric_features().computeTable(labels)

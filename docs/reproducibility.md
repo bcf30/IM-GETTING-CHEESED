@@ -172,19 +172,45 @@ Checked on two digital spheres (radius 6 and 7 voxels): Wadell 1.0076 and 1.0121
 above 1 because the Crofton surface estimate is low for small digital objects; this is the
 reason for the `≤ 1.05` validation tolerance.
 
+## Committed example run
+
+The committed outputs in `results/` and the five figures in `figures/` come from:
+
+```powershell
+python scripts/run_pipeline.py --data-root ./Small --output ./results --figures ./figures --limit 25 --synthetic-samples 4
+```
+
+`--limit 25` takes one volume per cheese type (round-robin), the quickest configuration that
+still exercises all 25 types and the full output path. Measured on the development machine:
+25 volumes, **0 skipped**, per-volume wall time median **≈ 2-4 s** (min 1.3 s, max ~10 s),
+object counts 492-2016 per volume, whole run ~90 s plus the synthetic benchmark. The per-volume
+cost is well under the design's 5-17 s estimate once the ellipsoid Feret proxy replaced the
+unscalable `MaxFeretDiameter3D` (see H7).
+
+A full-dataset run was attempted but did not complete: the JVM exhausted its 4 GB heap after
+142 volumes, and a `--limit 120` retry crashed silently at volume 58 (see H8 for the cause and
+the batching/heap mitigations). The committed example is therefore the reliable `--limit 25`
+run, which is deterministic and small.
+
+Because each cheese type has a single sample at `--limit 25`, the group comparisons and ICC(1)
+read "insufficient data" in `anova_results.txt` and `summary.md` by design (both need >= 2
+samples per type). A run that includes repeated samples per type (e.g. the full dataset)
+populates the statistics; the machinery is verified by `tests/test_stats.py` and by the
+`integration`/`smoke` tests on real data.
+
 ## Design hypotheses
 
 | ID | Outcome |
 |---|---|
-| H1 | Pending (data inspection task). |
-| H2 | Pending. |
-| H3 | Pending. |
+| H1 | **Not refuted; still TODO-VERIFY.** `VOXEL_SIZE_UM = 4.4` (0.55 µm raw × 8 Small-downscale) is kept. The committed run's interior-object equivalent diameters (number-weighted medians ~27-30 µm per sample) are plausible for mozzarella fat/serum structure at this resolution and do not conflict with it, but the value is derived from two paper statements, not stated for Small, so it stays marked TODO-VERIFY in `mozzavid/io.py`. All relative results are independent of it. |
+| H2 | **`DEFAULT_INVERT = True`.** Montage `figures/polarity_check.png`, central Z slices of 5 volumes spread over `cheese_index`: `cheese_1/1/0.tiff`, `cheese_7/1/0.tiff`, `cheese_13/1/0.tiff`, `cheese_19/1/0.tiff`, `cheese_25/1/0.tiff`. In 4 of the 5 panels (indices 1, 7, 13, 19) the rounded and elongated fat inclusions are **dark** on a **brighter grey matrix**, so Otsu/Li with "True above threshold" selects the matrix; the segmentation must complement it to keep the inclusions, hence `invert=True`. (Panel `cheese_25` shows bright specks on a darker noisy field, a different-looking acquisition, but the dominant and consistent signal is dark-on-bright.) `pipeline.DEFAULT_INVERT` is set from this record in task 13.1. |
+| H3 | **Not refuted on the committed run.** Global Otsu on a sigma = 1.5-voxel Gaussian gave segmentations whose overlays (`figures/segmentation_examples.png`) follow the visible dark inclusions, with per-sample foreground fractions in a plausible 0.04-0.33 range across cheese types. No systematic mis-segmentation was seen; `--method li` remains available as the documented fallback if a future check shows per-volume Otsu thresholds drifting > 0.1 within a sample. |
 | H4 | Not falsified in a first check: the xarray route gave an ImagePlus with 6 slices, 1 channel, 1 frame, 8-bit for a (6, 8, 10) mask, and the mask round-trip was exact. `tests/test_fiji.py` will check it formally. |
 | H5 | **Supported** for the `direct` backend: MorphoLibJ labelling, size opening and region analysis run headless through scyjava calls. The `plugin` backend fails at Analyze Regions 3D. The 3D ImageJ Suite was not needed. No scikit-image code is used. |
 | H6 | Probe of two 3³ cubes touching only at a corner: 1 component at 26-connectivity, 2 at 6-connectivity. This is the defined behaviour of 26-connectivity, not evidence that it merges clearly separate fat channels, so `CONNECTIVITY_3D` stays 26. The visual check on real volumes is still open. |
-| H7 | A headless 3D max Feret exists (`MaxFeretDiameter3D`), so the ellipsoid proxy is not needed. Radius-6 and radius-7 digital spheres gave 13.67 and 15.59 voxels. The ±15% comparison against analytic values is left to the measure tests. |
-| H8 | Pending (median seconds per volume from the full run). |
-| H9 | Pending. |
-| H10 | Pending. |
-| H11 | Pending. |
+| H7 | **Falsified on scalability; ellipsoid proxy adopted (Requirement 11.14/11.15).** MorphoLibJ's headless `MaxFeretDiameter3D` is accurate on small objects but computes the max pairwise point distance per label at roughly O(points²), so `computeTable` does **not finish** on a real volume (~0.18 foreground fraction, ~1800 components): all other region features together take 0.5–0.6 s, while max Feret ran > 3 min and was killed. `measure._feret_um` therefore uses `2 × largest equivalent-ellipsoid semi-axis` (already in the region table, zero extra cost). Accuracy vs analytic max Feret: sphere r=6 analytic 12 → proxy 12.16 (1.3%) vs MorphoLibJ 13.67 (14%); r=8 → 15.96 (0.3%) vs 17.29 (8%); r=10 → 20.01 (0.1%) vs 21.61 (8%); ellipsoid (12,8,6) analytic 24 → 24.11 (0.5%) vs 25.04; ellipsoid (14,6,6) analytic 28 → 28.02 (0.1%) vs 29.03. The proxy is **more accurate** than MorphoLibJ's discrete corner-to-corner estimate and within the 15% criterion, so the column is kept (not dropped). `fiji.analyze_regions_3d` no longer calls `MaxFeretDiameter3D`; the class stays importable and verified for reference. `tests/test_measure.py::test_feret_within_15_percent_of_analytic` checks the proxy against analytic spheres. |
+| H8 | **Per-volume cost confirmed low; long sequential runs are unstable on this stack.** With the ellipsoid Feret proxy, real volumes process in a median ~2-4 s each (492-2016 objects), so the arithmetic for 591 volumes is ~20-40 min. However, two attempts at a large run did **not** complete: a full (unlimited) run processed 142 volumes then raised `java.lang.OutOfMemoryError: Java heap space` on every subsequent volume (449 skipped), and a `--limit 120` run died silently at volume 58 (JVM hard exit, no Python traceback). `fiji.collect_garbage()` (System.gc after each volume) and `-Xmx4g` are not enough: ImageJ1 legacy global state retains references to the per-volume label images so the heap fills, and over hundreds of volumes the JVM also becomes unstable. **Mitigation for a full dataset run:** raise `JVM_MAX_HEAP` and/or run in batches (restart the process per batch, since the JVM starts once per process), or explicitly dispose the MorphoLibJ label ImagePlus and ResultsTable per volume. The committed example therefore uses `--limit 25` (one volume per type, ~90 s, 0 skipped, deterministic). The design already flags the full run as the bottleneck and offers `--limit` as the supported path. |
+| H9 | **Not executed headless in this environment; documented path kept.** The conda/PyImageJ install resolves Fiji through Maven and has no standalone `ImageJ`/`Fiji` GUI launcher on PATH, so `ImageJ --headless -macro` and the GUI `open()` float16 check could not be run here. `macros/batch_particle_analysis.ijm` is written against the command strings pinned in `mozzavid/fiji.py` (`Connected Components Labeling`, `Label Size Opening`, `Analyze Regions 3D`, connectivity 26) and reads the float32 copies exported by `scripts/validate_segmentation.py --export-float32`, which is the safe default because ImageJ 1.x has no half-float type. The macro-vs-Python agreement check (foreground fraction ≤ 0.01, object count ≤ 5%) and the float16-open test remain to be run by a reviewer with a Fiji GUI/launcher; the procedure is in the macro header and the README. |
+| H10 | **Measured on the committed `--limit 25` run.** `stats.icc1` is wired into `summary.md` per Stat_Metric and reported for every full run. At `--limit 25` each cheese type has a single sample, so ICC(1) reads "insufficient data" by design (it needs >= 2 samples with >= 2 volumes each); a run with repeated samples per type populates it. The sample is kept as the statistical unit regardless, the conservative choice (design H10). |
+| H11 | **Falsified on the `--limit 25` run; interpretation note added, schema unchanged.** Of 25 processed volumes, 32% (8/25, > the 20% threshold) have a largest object holding > 50% of the foreground voxels (median ratio 0.41, max 0.97; object counts 492-2016 per volume). At 4.4 µm/voxel some fat domains percolate into one large connected object, so size metrics are partly "connected-domain" sizes, not single-globule sizes. Per the design, adding the `largest_object_fraction` column is **optional** when H11 is falsified; it is left out to keep Requirement 14.2's schema, and this interpretation caveat is recorded here instead. The `touches_border` flag and interior-only size statistics already limit the bias from these large domains. |
 | H12 | **Supported on Python 3.14.10.** `imagej.init` succeeded (about 10 s after the first download), and a float32 (5, 7, 9) array survived `to_java_img` → `from_java_array` exactly, with Java dimensions (9, 7, 5). The Python 3.13 fallback was not needed. |

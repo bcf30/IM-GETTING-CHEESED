@@ -492,20 +492,25 @@ def discover() -> dict[str, Any]:
     }
     findings["versions"] = _attempt(_start_and_report_versions)
     if findings["versions"]["ok"]:  # without a running JVM nothing else can be probed
-        ij = fiji.get_ij()
-        findings["headless"] = _attempt(_probe_headless, ij)
-        findings["commands"] = _attempt(_probe_commands, ij)
-        findings["classes"] = {name: _attempt(_probe_class, name) for name in _morpholibj_class_names()}
-        findings["backends"] = {
-            "plugin": _attempt(_probe_backend, _plugin_operations(ij)),
-            "direct": _attempt(_probe_backend, _direct_operations()),
-        }
-        findings["mcib3d"] = _maybe_probe_mcib3d(findings["backends"])
-        findings["max_feret_3d"] = _attempt(
-            lambda: _probe_max_feret(_direct_label(
-                _build_binary_imageplus("probe-feret", _sphere_voxel), fiji.CONNECTIVITY_3D)))
+        _run_jvm_probes(findings)
     findings["summary"] = _summarise(findings)
     return findings
+
+
+def _run_jvm_probes(findings: dict[str, Any]) -> None:
+    """Run every probe that needs a started JVM and store the results in `findings`."""
+    ij = fiji.get_ij()
+    findings["headless"] = _attempt(_probe_headless, ij)
+    findings["commands"] = _attempt(_probe_commands, ij)
+    findings["classes"] = {name: _attempt(_probe_class, name) for name in _morpholibj_class_names()}
+    findings["backends"] = {
+        "plugin": _attempt(_probe_backend, _plugin_operations(ij)),
+        "direct": _attempt(_probe_backend, _direct_operations()),
+    }
+    findings["mcib3d"] = _maybe_probe_mcib3d(findings["backends"])
+    findings["max_feret_3d"] = _attempt(
+        lambda: _probe_max_feret(_direct_label(
+            _build_binary_imageplus("probe-feret", _sphere_voxel), fiji.CONNECTIVITY_3D)))
 
 
 def _status(result: dict[str, Any], key: str = "ok") -> str:

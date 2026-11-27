@@ -25,4 +25,5 @@ addopts = "-p no:faulthandler"
 markers = [
     "integration: needs the MozzaVID Small data root; skipped when it is absent",
     "smoke: end-to-end CLI run on real data; skipped when the data root is absent",
+    "slow: long-running test (minutes); runs the full Fiji chain on many volumes",
 ]
