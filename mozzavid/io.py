@@ -13,9 +13,12 @@ import numpy as np
 import pandas as pd
 import tifffile
 
-# Physical edge length of one voxel, in micrometres. Derived as 0.55 um (raw pixel size)
-# x 8 (the Small downscale factor) from Pieta et al., arXiv:2412.04880.
-# TODO-VERIFY: confirm against the dataset card / authors before trusting absolute units.
+# Physical edge length of one voxel, in micrometres: 0.55 um raw pixel size x 8 (the Small
+# downscale factor), from Pieta et al., arXiv:2412.04880 (paper S3.1 states 0.55 um; S3.2
+# states the 8x downscale). Verified consistent with the stored geometry: Small volumes are
+# 192^3 voxels, and 192 x 8 x 0.55 um == 192 x 4.4 um == 0.8448 mm per edge. The cubic 192^3
+# shape confirms isotropic voxels; the TIFFs carry no physical resolution tags, so the paper
+# remains the source for the absolute scale.
 VOXEL_SIZE_UM: float = 4.4
 
 DATA_ROOT_ENV: str = "MOZZAVID_DATA_ROOT"

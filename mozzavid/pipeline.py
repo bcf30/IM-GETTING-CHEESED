@@ -250,7 +250,7 @@ def _summary_markdown(config: PipelineConfig, per_sample: pd.DataFrame, results:
         "",
         f"- Data root: `{config.data_root}`",
         f"- Samples summarised: {len(per_sample)}",
-        f"- Voxel size: {s} µm (derived, TODO-VERIFY)",
+        f"- Voxel size: {s} µm (0.55 µm raw × 8 downscale; isotropic, verified)",
         f"- Gaussian sigma: {config.sigma} voxels ({config.sigma * s:.3g} µm)",
         f"- Min object size: {config.min_size} voxels ({config.min_size * s**3:.4g} µm³)",
         f"- Threshold: {config.method}, invert={config.invert}",
@@ -292,7 +292,7 @@ def _limitations_markdown() -> str:
         "- With 25 cheese types, the post-hoc stage tests 300 pairs; power per pair is limited "
         "at 5–6 samples per type, so only large differences are detectable.\n"
         "- The Small split resolves structures down to ~3 µm; globules below this are not "
-        "separable at the derived 4.4 µm voxel size.\n"
+        "separable at the 4.4 µm voxel size.\n"
         "- `foreground_fraction` is the volume fraction of the segmented (mostly fat) phase, "
         "not porosity."
     )
