@@ -42,16 +42,15 @@ the resolved data root when `./Small` is absent.
 # Stratified subset expected to finish in under 1 hour (6 volumes per cheese type):
 python scripts/run_pipeline.py --data-root ./Small --output ./results --figures ./figures --limit 150
 
-# Full 591-volume run — see the note below; long runs need a larger JVM heap or batching:
+# Full 591-volume run (~35 min of processing, median ~3.6 s/volume, plus the synthetic benchmark):
 python scripts/run_pipeline.py --data-root ./Small --output ./results --figures ./figures --synthetic-samples 20
 ```
 
-> **Long runs are unstable on this Fiji stack.** Per-volume processing is fast (~2-4 s), but a
-> full sequential run exhausted the 4 GB JVM heap after ~140 volumes in one attempt and crashed
-> at ~60 in another (ImageJ1 legacy global state retains per-volume images). For the full
-> dataset, raise `JVM_MAX_HEAP` in `mozzavid/fiji.py` and/or process in batches (restart the
-> process per batch). The committed example in `results/` uses `--limit 25` (~90 s,
-> deterministic). See H8 in `docs/reproducibility.md`.
+The committed `results/` and `figures/` are from a full 591-volume run (0 volumes skipped). The
+per-object table exceeds 50 MB, so it is written as `per_object_metrics.csv.gz`. An earlier
+version leaked ~28 MB of JVM heap per volume (unclosed MorphoLibJ label images in `cleanup`) and
+crashed after ~140 volumes; that leak is fixed, so the full run now completes within the 4 GB
+heap. See H8 in `docs/reproducibility.md`.
 
 Outputs land in `./results` (`per_object_metrics.csv`, `per_sample_summary.csv`,
 `anova_results.txt`, `summary.md`, `skipped_volumes.txt`) and `./figures` (five PNGs). The data

@@ -1,12 +1,149 @@
 === foreground_fraction ===                                 
-insufficient data
+Kruskal-Wallis: statistic=97.0167 p=9.64782e-11 epsilon_squared=0.655518 levene_p=5.11625e-08
+groups=25 sizes={'cheese_1': 6, 'cheese_10': 6, 'cheese_11': 6, 'cheese_12': 6, 'cheese_13': 6, 'cheese_14': 6, 'cheese_15': 6, 'cheese_16': 6, 'cheese_17': 6, 'cheese_18': 6, 'cheese_19': 6, 'cheese_2': 6, 'cheese_20': 6, 'cheese_21': 6, 'cheese_22': 6, 'cheese_23': 6, 'cheese_24': 6, 'cheese_25': 5, 'cheese_3': 6, 'cheese_4': 6, 'cheese_5': 6, 'cheese_6': 6, 'cheese_7': 6, 'cheese_8': 6, 'cheese_9': 6}
+post-hoc significant pairs (19 of 300 tested):
+  cheese_25 vs cheese_8: statistic=5.20039 p_adj=5.96624e-05
+  cheese_21 vs cheese_25: statistic=-4.95803 p_adj=0.000212919
+  cheese_25 vs cheese_3: statistic=4.89426 p_adj=0.000294061
+  cheese_5 vs cheese_8: statistic=4.36792 p_adj=0.00372548
+  cheese_13 vs cheese_8: statistic=4.36123 p_adj=0.00382829
+  cheese_22 vs cheese_8: statistic=4.2542 p_adj=0.00618891
+  cheese_17 vs cheese_25: statistic=-4.24373 p_adj=0.00646316
+  cheese_21 vs cheese_5: statistic=-4.11374 p_adj=0.0114067
+  cheese_13 vs cheese_21: statistic=4.10705 p_adj=0.0117019
+  cheese_11 vs cheese_8: statistic=4.09367 p_adj=0.0123559
+  cheese_3 vs cheese_5: statistic=-4.04685 p_adj=0.0150546
+  cheese_13 vs cheese_3: statistic=4.04016 p_adj=0.0154371
+  cheese_21 vs cheese_22: statistic=-4.00002 p_adj=0.0182409
+  cheese_7 vs cheese_8: statistic=3.99333 p_adj=0.0186983
+  cheese_22 vs cheese_3: statistic=3.93313 p_adj=0.02398
+  cheese_24 vs cheese_25: statistic=-3.86744 p_adj=0.0313448
+  cheese_11 vs cheese_21: statistic=3.83949 p_adj=0.0350149
+  cheese_1 vs cheese_25: statistic=-3.83556 p_adj=0.0354544
+  cheese_11 vs cheese_3: statistic=3.7726 p_adj=0.0455592
 
 === objects_per_mm3 ===                                     
-insufficient data
+Kruskal-Wallis: statistic=129.841 p=1.65794e-16 epsilon_squared=0.877301 levene_p=3.68077e-10
+groups=25 sizes={'cheese_1': 6, 'cheese_10': 6, 'cheese_11': 6, 'cheese_12': 6, 'cheese_13': 6, 'cheese_14': 6, 'cheese_15': 6, 'cheese_16': 6, 'cheese_17': 6, 'cheese_18': 6, 'cheese_19': 6, 'cheese_2': 6, 'cheese_20': 6, 'cheese_21': 6, 'cheese_22': 6, 'cheese_23': 6, 'cheese_24': 6, 'cheese_25': 5, 'cheese_3': 6, 'cheese_4': 6, 'cheese_5': 6, 'cheese_6': 6, 'cheese_7': 6, 'cheese_8': 6, 'cheese_9': 6}
+post-hoc significant pairs (35 of 300 tested):
+  cheese_25 vs cheese_3: statistic=-5.35728 p_adj=2.53455e-05
+  cheese_25 vs cheese_8: statistic=-5.29988 p_adj=3.4648e-05
+  cheese_13 vs cheese_3: statistic=-5.2308 p_adj=5.02963e-05
+  cheese_13 vs cheese_8: statistic=-5.1706 p_adj=6.9304e-05
+  cheese_11 vs cheese_3: statistic=-5.13715 p_adj=8.25641e-05
+  cheese_11 vs cheese_8: statistic=-5.07695 p_adj=0.000113144
+  cheese_1 vs cheese_25: statistic=4.92359 p_adj=0.00024981
+  cheese_23 vs cheese_3: statistic=-4.84284 p_adj=0.000375036
+  cheese_23 vs cheese_8: statistic=-4.78264 p_adj=0.000505194
+  cheese_1 vs cheese_13: statistic=4.77595 p_adj=0.000520494
+  cheese_1 vs cheese_11: statistic=4.6823 p_adj=0.000822653
+  cheese_20 vs cheese_3: statistic=-4.6221 p_adj=0.00109784
+  cheese_20 vs cheese_8: statistic=-4.5619 p_adj=0.00145996
+  cheese_16 vs cheese_25: statistic=4.43889 p_adj=0.0025952
+  cheese_1 vs cheese_23: statistic=4.38798 p_adj=0.00327201
+  cheese_25 vs cheese_4: statistic=-4.33047 p_adj=0.00424063
+  cheese_24 vs cheese_3: statistic=-4.32109 p_adj=0.00440931
+  cheese_10 vs cheese_3: statistic=-4.28765 p_adj=0.00511024
+  cheese_13 vs cheese_16: statistic=-4.26758 p_adj=0.0055724
+  cheese_24 vs cheese_8: statistic=-4.26089 p_adj=0.00572148
+  cheese_10 vs cheese_8: statistic=-4.22745 p_adj=0.00661798
+  cheese_25 vs cheese_9: statistic=-4.20291 p_adj=0.00735173
+  cheese_11 vs cheese_16: statistic=-4.17394 p_adj=0.0083228
+  cheese_1 vs cheese_20: statistic=4.16725 p_adj=0.00853991
+  cheese_13 vs cheese_4: statistic=-4.15387 p_adj=0.00902244
+  cheese_11 vs cheese_4: statistic=-4.06022 p_adj=0.0134821
+  cheese_2 vs cheese_25: statistic=4.04985 p_adj=0.0140428
+  cheese_13 vs cheese_9: statistic=-4.02009 p_adj=0.0158821
+  cheese_11 vs cheese_9: statistic=-3.92644 p_adj=0.0234494
+  cheese_16 vs cheese_23: statistic=3.87962 p_adj=0.0283519
+  cheese_1 vs cheese_24: statistic=3.86624 p_adj=0.0298418
+  cheese_13 vs cheese_2: statistic=-3.85955 p_adj=0.0305569
+  cheese_1 vs cheese_10: statistic=3.8328 p_adj=0.0339541
+  cheese_11 vs cheese_2: statistic=-3.76591 p_adj=0.0443074
+  cheese_23 vs cheese_4: statistic=-3.76591 p_adj=0.0443074
 
 === median_equiv_diameter_um ===                            
-insufficient data
+Kruskal-Wallis: statistic=132.002 p=6.72544e-17 epsilon_squared=0.891905 levene_p=1.62132e-07
+groups=25 sizes={'cheese_1': 6, 'cheese_10': 6, 'cheese_11': 6, 'cheese_12': 6, 'cheese_13': 6, 'cheese_14': 6, 'cheese_15': 6, 'cheese_16': 6, 'cheese_17': 6, 'cheese_18': 6, 'cheese_19': 6, 'cheese_2': 6, 'cheese_20': 6, 'cheese_21': 6, 'cheese_22': 6, 'cheese_23': 6, 'cheese_24': 6, 'cheese_25': 5, 'cheese_3': 6, 'cheese_4': 6, 'cheese_5': 6, 'cheese_6': 6, 'cheese_7': 6, 'cheese_8': 6, 'cheese_9': 6}
+post-hoc significant pairs (38 of 300 tested):
+  cheese_11 vs cheese_21: statistic=5.46718 p_adj=1.37179e-05
+  cheese_11 vs cheese_25: statistic=5.32823 p_adj=2.9653e-05
+  cheese_11 vs cheese_17: statistic=5.03221 p_adj=0.000144488
+  cheese_10 vs cheese_21: statistic=4.9151 p_adj=0.000263544
+  cheese_11 vs cheese_6: statistic=4.87495 p_adj=0.000322149
+  cheese_20 vs cheese_21: statistic=4.82477 p_adj=0.000413496
+  cheese_10 vs cheese_25: statistic=4.80185 p_adj=0.000462182
+  cheese_20 vs cheese_25: statistic=4.71572 p_adj=0.000705721
+  cheese_21 vs cheese_5: statistic=-4.69093 p_adj=0.000794141
+  cheese_25 vs cheese_5: statistic=-4.58811 p_adj=0.00130157
+  cheese_11 vs cheese_16: statistic=4.56713 p_adj=0.00143388
+  cheese_1 vs cheese_11: statistic=-4.48014 p_adj=0.00215578
+  cheese_10 vs cheese_17: statistic=4.48014 p_adj=0.00215578
+  cheese_12 vs cheese_21: statistic=4.48014 p_adj=0.00215578
+  cheese_21 vs cheese_23: statistic=-4.44333 p_adj=0.00253325
+  cheese_11 vs cheese_8: statistic=4.43664 p_adj=0.00260412
+  cheese_17 vs cheese_20: statistic=-4.3898 p_adj=0.00322212
+  cheese_12 vs cheese_25: statistic=4.38713 p_adj=0.00325044
+  cheese_23 vs cheese_25: statistic=4.35204 p_adj=0.00380356
+  cheese_10 vs cheese_6: statistic=4.32288 p_adj=0.0043275
+  cheese_21 vs cheese_24: statistic=-4.26266 p_adj=0.0056563
+  cheese_17 vs cheese_5: statistic=-4.25596 p_adj=0.00580737
+  cheese_20 vs cheese_6: statistic=4.23254 p_adj=0.00642355
+  cheese_11 vs cheese_19: statistic=4.20578 p_adj=0.00720718
+  cheese_24 vs cheese_25: statistic=4.17977 p_adj=0.00805386
+  cheese_5 vs cheese_6: statistic=4.09871 p_adj=0.0114252
+  cheese_12 vs cheese_17: statistic=4.04517 p_adj=0.0143259
+  cheese_10 vs cheese_16: statistic=4.01506 p_adj=0.0162245
+  cheese_17 vs cheese_23: statistic=-4.00837 p_adj=0.0166299
+  cheese_1 vs cheese_10: statistic=-3.92807 p_adj=0.023206
+  cheese_16 vs cheese_20: statistic=-3.92472 p_adj=0.0234441
+  cheese_12 vs cheese_6: statistic=3.88792 p_adj=0.027198
+  cheese_10 vs cheese_8: statistic=3.88457 p_adj=0.0274728
+  cheese_23 vs cheese_6: statistic=3.85111 p_adj=0.0313945
+  cheese_1 vs cheese_20: statistic=-3.83773 p_adj=0.0330311
+  cheese_17 vs cheese_24: statistic=-3.82769 p_adj=0.0342779
+  cheese_20 vs cheese_8: statistic=3.79423 p_adj=0.0390986
+  cheese_16 vs cheese_5: statistic=-3.79089 p_adj=0.039479
 
 === d50_um ===                                              
-insufficient data
+Kruskal-Wallis: statistic=133.027 p=4.37937e-17 epsilon_squared=0.898832 levene_p=0.0165734
+groups=25 sizes={'cheese_1': 6, 'cheese_10': 6, 'cheese_11': 6, 'cheese_12': 6, 'cheese_13': 6, 'cheese_14': 6, 'cheese_15': 6, 'cheese_16': 6, 'cheese_17': 6, 'cheese_18': 6, 'cheese_19': 6, 'cheese_2': 6, 'cheese_20': 6, 'cheese_21': 6, 'cheese_22': 6, 'cheese_23': 6, 'cheese_24': 6, 'cheese_25': 5, 'cheese_3': 6, 'cheese_4': 6, 'cheese_5': 6, 'cheese_6': 6, 'cheese_7': 6, 'cheese_8': 6, 'cheese_9': 6}
+post-hoc significant pairs (37 of 300 tested):
+  cheese_10 vs cheese_25: statistic=5.43381 p_adj=1.65489e-05
+  cheese_1 vs cheese_10: statistic=-5.27093 p_adj=4.0584e-05
+  cheese_10 vs cheese_16: statistic=5.07026 p_adj=0.000118386
+  cheese_23 vs cheese_25: statistic=4.99375 p_adj=0.000175879
+  cheese_1 vs cheese_23: statistic=-4.80939 p_adj=0.000448116
+  cheese_24 vs cheese_25: statistic=4.77691 p_adj=0.000525138
+  cheese_20 vs cheese_25: statistic=4.70675 p_adj=0.000739985
+  cheese_10 vs cheese_8: statistic=4.68899 p_adj=0.000804454
+  cheese_16 vs cheese_23: statistic=-4.60872 p_adj=0.00118305
+  cheese_1 vs cheese_24: statistic=-4.58197 p_adj=0.00134042
+  cheese_1 vs cheese_20: statistic=-4.50839 p_adj=0.00189435
+  cheese_10 vs cheese_21: statistic=4.50839 p_adj=0.00189435
+  cheese_11 vs cheese_25: statistic=4.41975 p_adj=0.00284582
+  cheese_16 vs cheese_24: statistic=-4.3813 p_adj=0.00338591
+  cheese_10 vs cheese_19: statistic=4.32778 p_adj=0.00430766
+  cheese_10 vs cheese_17: statistic=4.32109 p_adj=0.00442483
+  cheese_16 vs cheese_20: statistic=-4.30772 p_adj=0.00468454
+  cheese_10 vs cheese_6: statistic=4.26758 p_adj=0.00559216
+  cheese_25 vs cheese_5: statistic=-4.25393 p_adj=0.00592334
+  cheese_23 vs cheese_8: statistic=4.22745 p_adj=0.00664161
+  cheese_1 vs cheese_11: statistic=-4.20738 p_adj=0.00723371
+  cheese_10 vs cheese_4: statistic=4.11374 p_adj=0.0108617
+  cheese_22 vs cheese_25: statistic=4.05622 p_adj=0.0138645
+  cheese_21 vs cheese_23: statistic=-4.04685 p_adj=0.0143798
+  cheese_1 vs cheese_5: statistic=-4.03347 p_adj=0.0151689
+  cheese_11 vs cheese_16: statistic=4.00671 p_adj=0.0169318
+  cheese_24 vs cheese_8: statistic=4.00002 p_adj=0.0173542
+  cheese_20 vs cheese_8: statistic=3.92644 p_adj=0.0235357
+  cheese_19 vs cheese_23: statistic=-3.86624 p_adj=0.0300628
+  cheese_17 vs cheese_23: statistic=-3.85955 p_adj=0.0307841
+  cheese_18 vs cheese_25: statistic=3.833 p_adj=0.0341786
+  cheese_16 vs cheese_5: statistic=-3.8328 p_adj=0.0341786
+  cheese_1 vs cheese_22: statistic=-3.82611 p_adj=0.0348896
+  cheese_21 vs cheese_24: statistic=-3.81942 p_adj=0.0357156
+  cheese_23 vs cheese_6: statistic=3.80604 p_adj=0.0375615
+  cheese_13 vs cheese_25: statistic=3.77561 p_adj=0.0422992
+  cheese_20 vs cheese_21: statistic=3.74584 p_adj=0.0474648
 

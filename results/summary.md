@@ -1,7 +1,7 @@
 # MozzaVID microstructure summary
 
 - Data root: `C:\Users\Ramiro\Documents\VSCode\IM-GETTING-CHEESED\Small`
-- Samples summarised: 25
+- Samples summarised: 149
 - Voxel size: 4.4 µm (derived, TODO-VERIFY)
 - Gaussian sigma: 1.5 voxels (6.6 µm)
 - Min object size: 50 voxels (4259 µm³)
@@ -11,23 +11,35 @@
 
 ### foreground_fraction
 
-- Comparison: insufficient data
-- ICC(1): insufficient data
+- Test: Kruskal-Wallis
+- Statistic: 97.02, p = 9.648e-11
+- epsilon_squared: 0.6555
+- Levene p: 5.116e-08, groups: 25
+- ICC(1) of volumes within samples: 0.7254
 
 ### objects_per_mm3
 
-- Comparison: insufficient data
-- ICC(1): insufficient data
+- Test: Kruskal-Wallis
+- Statistic: 129.8, p = 1.658e-16
+- epsilon_squared: 0.8773
+- Levene p: 3.681e-10, groups: 25
+- ICC(1) of volumes within samples: 0.8097
 
 ### median_equiv_diameter_um
 
-- Comparison: insufficient data
-- ICC(1): insufficient data
+- Test: Kruskal-Wallis
+- Statistic: 132, p = 6.725e-17
+- epsilon_squared: 0.8919
+- Levene p: 1.621e-07, groups: 25
+- ICC(1) of volumes within samples: 0.2763
 
 ### d50_um
 
-- Comparison: insufficient data
-- ICC(1): insufficient data
+- Test: Kruskal-Wallis
+- Statistic: 133, p = 4.379e-17
+- epsilon_squared: 0.8988
+- Levene p: 0.01657, groups: 25
+- ICC(1) of volumes within samples: 0.4034
 
 
 ## Skipped volumes
