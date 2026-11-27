@@ -1,0 +1,7 @@
+[browser]
+# Skip the first-run email prompt and anonymous usage telemetry so the app launches
+# non-interactively (e.g. under `conda run`, which provides no stdin for the prompt).
+gatherUsageStats = false
+
+[server]
+headless = true
